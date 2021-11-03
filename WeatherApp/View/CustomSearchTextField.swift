@@ -20,14 +20,14 @@ class CustomSearchTextField: UITextField{
     //        }
     //    }
     let lock = NSLock()
-    var resultsList : [SearchItem] = [SearchItem]() {
-        willSet {
-            lock.lock()
-        }
-        didSet {
-            lock.unlock()
-        }
-    }
+    var resultsList : [SearchItem] = [SearchItem]() //{
+//        willSet {
+//            lock.lock()
+//        }
+//        didSet {
+//            lock.unlock()
+//        }
+//    }
     
     var tableView: UITableView?
     
@@ -71,6 +71,7 @@ class CustomSearchTextField: UITextField{
     }
     
     @objc open func textFieldDidEndEditing() {
+        tableView?.isHidden = true
         print("End editing")
         
     }
@@ -91,8 +92,6 @@ class CustomSearchTextField: UITextField{
         DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
             do {
                 self.dataList = try context.fetch(request)
-                
-                print(self.dataList.first?.cityName)
                 
                 self.appendToResult(dataList: self.dataList, text: text)
                 
@@ -205,7 +204,12 @@ extension CustomSearchTextField: UITableViewDelegate, UITableViewDataSource {
         if let tableView = tableView {
             superview?.bringSubviewToFront(tableView)
             var tableHeight: CGFloat = 0
-            tableHeight = tableView.contentSize.height
+            
+            if tableView.contentSize.height < 300 {
+                tableHeight = tableView.contentSize.height
+            } else {
+                tableHeight = 300
+            }
             
             // Set a bottom margin of 10p
             if tableHeight < tableView.contentSize.height {
@@ -243,9 +247,6 @@ extension CustomSearchTextField: UITableViewDelegate, UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("numberOfRowsInSection = \(resultsList.count)")
-        if resultsList.count > 50 {
-            return 50
-        }
         return resultsList.count
     }
     
@@ -254,13 +255,15 @@ extension CustomSearchTextField: UITableViewDelegate, UITableViewDataSource {
     //Adding rows in the tableview with the data from dataList
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row > resultsList.count {
+        let localResultList = resultsList
+        if indexPath.row >= localResultList.count {
 //            tableView.reloadData()
             return UITableViewCell()
         }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomSearchTextFieldCell", for: indexPath) as UITableViewCell
         cell.backgroundColor = UIColor.clear
-        cell.textLabel?.attributedText = resultsList[indexPath.row].getFormatedText()
+        cell.textLabel?.attributedText = localResultList[indexPath.row].getFormatedText()
         return cell
     }
     

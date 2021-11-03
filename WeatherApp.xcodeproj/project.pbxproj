@@ -71,6 +71,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		22900EBE273299DA001DEF31 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				22507D92272FC7C800B933B2 /* CustomSearchTextField.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		22BAD05A272ED5D000843FDB /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -108,8 +116,8 @@
 				22C92E7E272028D800ED1A26 /* Services */,
 				227A651C272030D8001D237F /* Model */,
 				22BAD05A272ED5D000843FDB /* CoreData */,
+				22900EBE273299DA001DEF31 /* View */,
 				22C92E6A2720288C00ED1A26 /* ViewController.swift */,
-				22507D92272FC7C800B933B2 /* CustomSearchTextField.swift */,
 				22C92E6F2720289800ED1A26 /* Assets.xcassets */,
 				22C92E742720289800ED1A26 /* Info.plist */,
 			);

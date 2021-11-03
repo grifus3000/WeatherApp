@@ -13,6 +13,14 @@ class ViewController: UIViewController {
     let model = Model()
     let weatherLable = UILabel()
     
+    var backgroundImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "day")
+        return imageView
+    }()
+    
+    var weatherIcon = UIImageView()
+    
     var locationButton: UIButton = {
         let button = UIButton()
         
@@ -32,13 +40,15 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         //auth()
         
-        [weatherLable, locationButton, cityTextField].forEach {
+        [weatherLable, locationButton, cityTextField, weatherIcon].forEach {
             view.addSubview($0)
         }
 
         cityTextField.delegate = self
         model.delegate = self
-        print(FileManager.default.urls(for: .applicationDirectory, in: .userDomainMask))
+        
+        configureBackgroundView()
+        startWeatherByLocation()
 //        model.parseCitiesFromJsonToCoreData()
     }
     
@@ -52,6 +62,24 @@ class ViewController: UIViewController {
         configureLable()
         configureLocationButton()
         configureCityTextLable()
+        configureWeatherIcon()
+    }
+    
+    func configureWeatherIcon() {
+        weatherIcon.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            weatherIcon.leftAnchor.constraint(equalTo: cityTextField.leftAnchor),
+            weatherIcon.topAnchor.constraint(equalTo: cityTextField.bottomAnchor, constant: 0),
+            weatherIcon.widthAnchor.constraint(equalToConstant: 100),
+            weatherIcon.heightAnchor.constraint(equalToConstant: 100)
+        ])
+    }
+    
+    func configureBackgroundView() {
+        backgroundImageView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+        view.addSubview(backgroundImageView)
+        view.sendSubviewToBack(backgroundImageView)
     }
     
     func configureCityTextLable() {
@@ -86,7 +114,6 @@ class ViewController: UIViewController {
             locationButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
             locationButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30)
         ])
-        
     }
     
     func auth() {
@@ -102,14 +129,37 @@ class ViewController: UIViewController {
         }
     }
     
-    @objc func startWeatherByLocation() {
-        model.getWeatherByLocation()
+    func setWeatherIconBy(data: Data) {
+        UIView.transition(with: weatherIcon, duration: 1, options: .transitionCrossDissolve, animations: {
+            self.weatherIcon.image = UIImage(data: data)
+        }, completion: nil)
     }
     
+    @objc func startWeatherByLocation() {
+        model.getWeatherByLocation { (iconData) in
+            DispatchQueue.main.async {
+                self.setWeatherIconBy(data: iconData)
+            }
+        }
+    }
+    
+    func createAnitatingFor(view: UIView, name: String) {
+        UIView.transition(with: backgroundImageView, duration: 1, options: .transitionCrossDissolve, animations: {
+            let image = UIImage(named: name)
+            self.backgroundImageView.image = image
+        }, completion: nil)
+
+    }
 }
 
-
 extension ViewController: ModelDelegate {
+    func setBackgroundImageBy(name: String) {
+        DispatchQueue.main.async {
+            print(name)
+            self.createAnitatingFor(view: self.backgroundImageView, name: name)
+            
+        }
+    }
     
     func setTemperature(city: String, degree: Double) {
         DispatchQueue.main.async {
@@ -128,8 +178,11 @@ extension ViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let cityField = textField as? CustomSearchTextField {
             guard let id = cityField.currentItemId else { return }
-            model.getWeatherBy(id: String(id))
-            print("some")
+            model.getWeatherBy(id: String(id)) { (imageData) in
+                DispatchQueue.main.async {
+                    self.setWeatherIconBy(data: imageData)
+                }
+            }
         }
     }
 }

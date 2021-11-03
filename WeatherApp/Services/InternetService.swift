@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class InternetService {
     
@@ -23,5 +24,13 @@ class InternetService {
             
             completion(weather)
         }.resume()
+    }
+    
+    static func getIconBy(name: String) -> Data? {
+        let urlString = "http://openweathermap.org/img/wn/\(name).png"
+        guard let url = URL(string: urlString) else { return nil }
+        
+        guard let imageData = try? Data.init(contentsOf: url) else { return nil }
+        return imageData
     }
 }
