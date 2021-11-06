@@ -51,7 +51,7 @@ class ViewController: UIViewController {
         startWeatherByLocation()
 //        model.parseCitiesFromJsonToCoreData()
     }
-    
+        
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         cityTextField.endEditing(true)
@@ -136,11 +136,13 @@ class ViewController: UIViewController {
     }
     
     @objc func startWeatherByLocation() {
-        model.getWeatherByLocation { (iconData) in
+        model.getWeatherByLocation { (iconData, id)  in
             DispatchQueue.main.async {
                 self.setWeatherIconBy(data: iconData)
             }
+            self.cityTextField.findCityBy(id: id)
         }
+        
     }
     
     func createAnitatingFor(view: UIView, name: String) {

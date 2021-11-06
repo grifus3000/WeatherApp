@@ -20,33 +20,33 @@ class Model {
         case moscow = "http://api.openweathermap.org/data/2.5/weather?q=moscow&appid=9d8596d695b3ebb9cfe0e8c2e698037a"
     }
     
-    func getWeatherByLocation(completion: @escaping (Data) -> ()) {
+    func getWeatherByLocation(completion: @escaping (Data, Int) -> ()) {
         let location = LocationService.shared.getLocation()
         guard let lat = location.lat, let lon = location.lon else { return }
         
         let urlString = "http://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&appid=9d8596d695b3ebb9cfe0e8c2e698037a"
         
-        getWeather(urlString: urlString) { (imageData) in
-            completion(imageData)
+        getWeather(urlString: urlString) { (imageData, id)  in
+            completion(imageData, id)
         }
     }
     
     func getWeatherBy(cityName: String, completion: @escaping (Data) -> ()) {
         let urlString = "http://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=9d8596d695b3ebb9cfe0e8c2e698037a"
         
-        getWeather(urlString: urlString) { (imageData) in
+        getWeather(urlString: urlString) { (imageData, id) in
             completion(imageData)
         }
     }
     
     func getWeatherBy(id: String, completion: @escaping (Data) -> ()) {
         let urlString = "http://api.openweathermap.org/data/2.5/weather?id=\(id)&appid=9d8596d695b3ebb9cfe0e8c2e698037a"
-        getWeather(urlString: urlString) { (imageData) in
+        getWeather(urlString: urlString) { (imageData, id) in
             completion(imageData)
         }
     }
     
-    private func getWeather(urlString: String, completion: @escaping (Data) -> ()) {
+    private func getWeather(urlString: String, completion: @escaping (Data, Int) -> ()) {
         print(urlString)
         InternetService.getWeatherBy(string: urlString) { (weather) in
             self.delegate?.setTemperature(city: weather.name, degree: weather.main.temp)
@@ -54,7 +54,9 @@ class Model {
             
             guard let iconName = weather.weather?.first?.icon else { return }
             guard let data = InternetService.getIconBy(name: iconName) else { return }
-            completion(data)
+            guard let id = weather.id else { return }
+            
+            completion(data, Int(id))
         }
     }
     
@@ -70,7 +72,7 @@ class Model {
     
     func parseCitiesFromJsonToCoreData() {
         let decoder = JSONDecoder()
-        let fileUrl = URL(fileURLWithPath: "/Volumes/hdd/Programming/Swift/UIKit/WeatherApp/city.list.json")
+        let fileUrl = URL(fileURLWithPath: "/Volumes/hdd/Programming/GtiHub/WeatherApp/WeatherApp/city_list.json")
         guard let cities = try? decoder.decode(Cities.self, from: Data(contentsOf: fileUrl)) else { return }
         
         cities.forEach { (city) in

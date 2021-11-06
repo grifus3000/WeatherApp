@@ -15,30 +15,6 @@ class DatabaseManager {
         return NSEntityDescription.entity(forEntityName: string, in: persistentContainer.viewContext)!
     }
     
-    func getFetchResultController(entityName: String, sortDescriptorKey: String, filterKey: String?) -> NSFetchedResultsController<NSFetchRequestResult> {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        let sortDescriptor = NSSortDescriptor(key: sortDescriptorKey, ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        if let filter = filterKey {
-            fetchRequest.predicate = NSPredicate(format: "character.id = %@", filter)
-        }
-        
-        let fetchedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        return fetchedResultController
-    }
-    
-    func getFetchRequestControllerObject(entityName: String, sortDescriptorKey: String, filterKey: String?) -> NSFetchedResultsController<NSFetchRequestResult> {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        let sortDescriptor = NSSortDescriptor(key: sortDescriptorKey, ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        if let filter = filterKey {
-            fetchRequest.predicate = NSPredicate(format: "id = %@", filter)
-        }
-        
-        let fetchedResultController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        return fetchedResultController
-    }
-    
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CitiesData")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in

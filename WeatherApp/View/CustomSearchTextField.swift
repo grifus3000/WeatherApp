@@ -11,23 +11,9 @@ import CoreData
 
 class CustomSearchTextField: UITextField{
     
-    var dataList : [CitiesData] = [CitiesData]() //{
-    //        didSet {
-    //            DispatchQueue.main.async {
-    //                print(self.dataList[0].cityName)
-    //                self.appendToResult(dataList: self.dataList)
-    //            }
-    //        }
-    //    }
-    let lock = NSLock()
-    var resultsList : [SearchItem] = [SearchItem]() //{
-//        willSet {
-//            lock.lock()
-//        }
-//        didSet {
-//            lock.unlock()
-//        }
-//    }
+    var dataList = [CitiesData]()
+    
+    var resultsList = [SearchItem]()
     
     var tableView: UITableView?
     
@@ -61,8 +47,9 @@ class CustomSearchTextField: UITextField{
     
     @objc open func textFieldDidChange(){
         print("Text changed ...")
+        
         filter(text: self.text!)
-        //        appendToResult()
+//                appendToResult()
         tableView?.isHidden = false
     }
     
@@ -92,9 +79,7 @@ class CustomSearchTextField: UITextField{
         DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
             do {
                 self.dataList = try context.fetch(request)
-                
                 self.appendToResult(dataList: self.dataList, text: text)
-                
             } catch {
                 print("Error while fetching data: \(error)")
             }
@@ -102,6 +87,14 @@ class CustomSearchTextField: UITextField{
     }
     
     // MARK: Filtering methods
+    
+    func findCityBy(id: Int) {
+        let predicate = NSPredicate(format: "cityId == %@", String(id))
+        let request : NSFetchRequest<CitiesData> = CitiesData.fetchRequest()
+        request.predicate = predicate
+        
+        setCityNameByLocation(withRequest: request)
+    }
     
     fileprivate func filter(text: String) {
         let predicate = NSPredicate(format: "cityName CONTAINS[cd] %@", text)
@@ -111,36 +104,45 @@ class CustomSearchTextField: UITextField{
         loadItems(withRequest : request, text: text)
     }
     
-    var workItem = DispatchWorkItem {
+    func setCityNameByLocation(withRequest request : NSFetchRequest<CitiesData>) {
+        DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
+            do {
+                let city = try context.fetch(request)
+                guard let cityName = city.first?.cityName else { return }
+                guard let countyName = city.first?.countryName else { return }
+                guard let cityId = city.first?.cityId else { return }
+                
+                let item = SearchItem(cityName: cityName, countryName: countyName, id: Int(cityId))
+                
+                DispatchQueue.main.async {
+                    self.text = item.getStringText()
+                }
+                
+                self.currentItemId = Int(cityId)
+            } catch {
+                print("Error while fetching data: \(error)")
+            }
+        }
         
     }
     
     func appendToResult(dataList: [CitiesData], text: String) {
-        workItem.cancel()
-        print("4")
-//        self.resultsList = []
-        var result = [SearchItem]()
-        print("self data list name = \(self.dataList.first?.cityName)")
-        print("local data list name = \(dataList.first?.cityName)")
-        
-//        workItem = DispatchWorkItem(block: {
 
+        var result = [SearchItem]()
+            
         for i in 0..<dataList.count {
             if self.dataList.count != dataList.count {
                 DispatchQueue.main.async {
-//                    self.filter(text: self.text!)
                     self.tableView?.reloadData()
                 }
                 break
             }
-                print("1")
+                
                 guard let cityName = dataList[i].cityName, let countyName = dataList[i].countryName else {
-                    print(dataList[i].cityName, dataList[i].countryName)
                     return }
-            print(dataList.count)
-            print(self.dataList.count)
+        
                 let item = SearchItem(cityName: cityName, countryName: countyName, id: Int(dataList[i].cityId))
-//
+
                 let cityFilterRange = (item.cityName as NSString).range(of: text, options: .caseInsensitive)
                 let countryFilterRange = (item.countryName as NSString).range(of: text, options: .caseInsensitive)
 
@@ -152,24 +154,18 @@ class CustomSearchTextField: UITextField{
                     if countryFilterRange.location != NSNotFound {
                         item.attributedCountryName!.setAttributes([.font: UIFont.boldSystemFont(ofSize: 17)], range: countryFilterRange)
                     }
-            print("2")
-            result.append(item)
-            print("3")
-            self.resultsList = result
+                    
+                    result.append(item)
+                    
+                    self.resultsList = result
                 }
         }
-//        })
-//        DispatchQueue.main.async(execute: workItem)
-        workItem.perform()
-//
+        
         DispatchQueue.main.async {
             self.updateSearchTableView()
-//            //            self.tableView?.reloadData()
-//            self.tableView?.isHidden = false
-//
         }
-        
     }
+    
 }
 
 extension CustomSearchTextField: UITableViewDelegate, UITableViewDataSource {
@@ -277,4 +273,3 @@ extension CustomSearchTextField: UITableViewDelegate, UITableViewDataSource {
     }
     
 }
-

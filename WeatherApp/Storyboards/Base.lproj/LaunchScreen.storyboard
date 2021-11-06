@@ -19,6 +19,12 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="day" translatesAutoresizingMaskIntoConstraints="NO" id="Wh8-vM-SIj">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weather" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1yX-SC-NQW">
+                                <rect key="frame" x="145.5" y="244" width="123.5" height="41"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
+                                <color key="textColor" systemColor="systemIndigoColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -28,6 +34,8 @@
                             <constraint firstItem="Wh8-vM-SIj" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="L5C-a2-e4d"/>
                             <constraint firstItem="Wh8-vM-SIj" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="ctE-Ig-P08"/>
                             <constraint firstItem="Wh8-vM-SIj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="gc1-W3-vx1"/>
+                            <constraint firstItem="1yX-SC-NQW" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="200" id="kuY-mC-PQy"/>
+                            <constraint firstItem="1yX-SC-NQW" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="rO5-vb-I1b"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -40,6 +48,9 @@
         <image name="day" width="750" height="1334"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemIndigoColor">
+            <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
