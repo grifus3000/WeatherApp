@@ -76,14 +76,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		2287893D27355BBB000393CB /* GeneratedModel  */ = {
+		2287893D27355BBB000393CB /* PreloadedModel */ = {
 			isa = PBXGroup;
 			children = (
 				228DAF88273587EA007BEBFA /* CitiesData.sqlite-shm */,
 				228DAF87273587EA007BEBFA /* CitiesData.sqlite-wal */,
 				2287894727356241000393CB /* CitiesData.sqlite */,
 			);
-			path = "GeneratedModel ";
+			path = PreloadedModel;
 			sourceTree = "<group>";
 		};
 		22900EBE273299DA001DEF31 /* View */ = {
@@ -97,7 +97,7 @@
 		22BAD05A272ED5D000843FDB /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
-				2287893D27355BBB000393CB /* GeneratedModel  */,
+				2287893D27355BBB000393CB /* PreloadedModel */,
 				22507D96272FC80A00B933B2 /* SearchItem.swift */,
 				22BAD056272ED53700843FDB /* CitiesData.xcdatamodeld */,
 				22BAD05B272ED5EA00843FDB /* DatabaseManager.swift */,
